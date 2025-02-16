@@ -1,1 +1,2 @@
-# caps_stone
+api/bookings/
+api/register/

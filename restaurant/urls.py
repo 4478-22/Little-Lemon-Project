@@ -1,6 +1,6 @@
 from django.urls import path
 from . import views
-from .views import BookingCreateView
+from .views import BookingCreateView, UserRegistrationView, AuthTokenView
 
 
 urlpatterns = [
@@ -12,4 +12,6 @@ urlpatterns = [
     path('menu_item/<int:pk>/', views.display_menu_item, name="menu_item"),  
     path('bookings', views.bookings, name='bookings'), 
     path('api/bookings/', BookingCreateView.as_view(), name='booking-create'),
+    path('api/register/', UserRegistrationView.as_view(), name='user-register'),
+    path('api/login/', AuthTokenView.as_view(), name='user-login'),
 ]
