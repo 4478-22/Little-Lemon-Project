@@ -68,7 +68,7 @@ def book(request):
 
 def menu(request):
     menu_data = Menu.objects.all()
-    return render(request, 'menu.html', {"menu": menu_data})
+    return render(request, 'menu.html', {"menu": {"menu": menu_data}})
 
 def display_menu_item(request, pk=None):
     menu_item = Menu.objects.get(pk=pk) if pk else None
@@ -77,7 +77,7 @@ def display_menu_item(request, pk=None):
 @csrf_exempt
 def bookings(request):
     if request.method == 'POST':
-        data = json.loads(request.body)  # Fixed to use request.body
+        data = json.loads(request.body)
         exist = Booking.objects.filter(
             reservation_date=data['reservation_date'],
             reservation_slot=data['reservation_slot']
@@ -93,7 +93,15 @@ def bookings(request):
         else:
             return HttpResponse("{'error': 1}", content_type='application/json')
 
-    date = request.GET.get('date', datetime.today().date())
-    bookings = Booking.objects.filter(reservation_date=date)
+    # SIMPLER FIX: Check if date parameter is empty
+    date_param = request.GET.get('date', '')
+    
+    if date_param:
+        # Use the provided date
+        bookings = Booking.objects.filter(reservation_date=date_param)
+    else:
+        # Use today's date if no date provided
+        bookings = Booking.objects.filter(reservation_date=datetime.today().date())
+    
     booking_json = serializers.serialize('json', bookings)
     return HttpResponse(booking_json, content_type='application/json')
